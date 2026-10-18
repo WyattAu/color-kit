@@ -1,0 +1,58 @@
+[package]
+name = "color-kit"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+authors = ["Wyatt Au <wyatt_au@protonmail.com>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/WyattAu/color-kit"
+homepage = "https://github.com/WyattAu/color-kit"
+documentation = "https://docs.rs/color-kit"
+description = "Colour science leaf for Rust — linear-sRGB core, Oklab/OkLCH, WCAG 2.1 AA contrast, perceptual lightness contrast, dichromat simulation, deterministic quantisation. no_std"
+readme = "README.md"
+keywords = ["color", "contrast", "wcag", "accessibility", "oklch", "no-std"]
+categories = ["graphics", "no-std", "accessibility"]
+exclude = [".github/", "supply-chain/"]
+
+# Layer model: docs/layers.md in WyattAu/engineering-standards.
+# L0 — leaf: zero estate-internal dependencies by mandate (specs/color-kit.md).
+[package.metadata.layers]
+tier = "L0"
+
+# libm supplies the no_std transcendentals, the same edge dsp-core and
+# font-shape already carry. thiserror is the typed error taxonomy (the
+# font-parse precedent). No serde: the DTCG bridge lives in theme-kit (L1).
+[dependencies]
+libm = "0.2"
+thiserror = { version = "2", default-features = false }
+
+[dev-dependencies]
+proptest = "1"
+
+[features]
+default = ["std"]
+# std is off for embedded/bare-metal builds; the library is no_std + alloc
+# regardless (see lib.rs).
+std = []
+
+[lints.rust]
+missing_docs = "deny"
+unsafe_code = "deny"
+
+# Colour-science discipline (mirrors font-parse / font-shape): every public
+# function is total — NaN, inf, out-of-gamut, and empty inputs yield typed
+# `ColorError`s or documented saturation rules, never panics. The theme gate
+# runs these on every authored token, so a panic would be a build crash from
+# a colour literal. The lib target holds these deny-level lints; the test and
+# example targets lift them at file level with justification.
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+indexing_slicing = "deny"
+undocumented_unsafe_blocks = "deny"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = true
