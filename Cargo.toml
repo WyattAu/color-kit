@@ -10,7 +10,7 @@ homepage = "https://github.com/WyattAu/color-kit"
 documentation = "https://docs.rs/color-kit"
 description = "Colour science leaf for Rust — linear-sRGB core, Oklab/OkLCH, WCAG 2.1 AA contrast, perceptual lightness contrast, dichromat simulation, deterministic quantisation. no_std"
 readme = "README.md"
-keywords = ["color", "contrast", "wcag", "accessibility", "oklch", "no-std"]
+keywords = ["color", "contrast", "wcag", "accessibility", "oklch"]
 categories = ["graphics", "no-std", "accessibility"]
 exclude = [".github/", "supply-chain/"]
 
