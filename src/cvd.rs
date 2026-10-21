@@ -47,7 +47,13 @@ fn apply(kind: CvdKind, r: f64, g: f64, b: f64) -> (f64, f64, f64) {
 /// a NaN cascade — total, like every function in this crate.
 #[must_use]
 pub fn simulate_cvd(c: Rgba, kind: CvdKind) -> Rgba {
-    let clamp = |v: f64| if v.is_finite() { v.clamp(0.0, 1.0) } else { 0.0 };
+    let clamp = |v: f64| {
+        if v.is_finite() {
+            v.clamp(0.0, 1.0)
+        } else {
+            0.0
+        }
+    };
     let (r, g, b) = (clamp(c.r), clamp(c.g), clamp(c.b));
     let (rr, rg, rb) = apply(kind, r, g, b);
     Rgba {

@@ -55,7 +55,10 @@ fn wcag_level_mapping() {
 fn contrast_ratio_rejects_non_finite() {
     let bad = Rgba::linear(f64::NAN, 0.0, 0.0);
     assert_eq!(contrast_ratio(bad, hex("#fff")), None);
-    assert_eq!(lightness_contrast(hex("#000"), Rgba::linear(0.0, f64::INFINITY, 0.0)), None);
+    assert_eq!(
+        lightness_contrast(hex("#000"), Rgba::linear(0.0, f64::INFINITY, 0.0)),
+        None
+    );
 }
 
 // -- REQ-COL-004: perceptual lightness contrast ---------------------------------
@@ -64,8 +67,14 @@ fn contrast_ratio_rejects_non_finite() {
 fn lightness_contrast_polarity_and_ordering() {
     let black_on_white = lightness_contrast(hex("#000"), hex("#fff")).unwrap_or(0.0);
     let white_on_black = lightness_contrast(hex("#fff"), hex("#000")).unwrap_or(0.0);
-    assert!(black_on_white > 90.0, "black on white is far above AA: {black_on_white}");
-    assert!(white_on_black < -90.0, "white on black is strongly negative: {white_on_black}");
+    assert!(
+        black_on_white > 90.0,
+        "black on white is far above AA: {black_on_white}"
+    );
+    assert!(
+        white_on_black < -90.0,
+        "white on black is strongly negative: {white_on_black}"
+    );
     // Identical colours produce no signal.
     assert_eq!(lightness_contrast(hex("#abc"), hex("#abc")), Some(0.0));
     // Grey ramps on white: darker text carries MORE lightness contrast
@@ -96,7 +105,9 @@ fn srgb8_round_trip_is_exact() {
 
 #[test]
 fn oklab_round_trip_is_stable() {
-    for hexcode in ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", "#7f3fbf", "#123456"] {
+    for hexcode in [
+        "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", "#7f3fbf", "#123456",
+    ] {
         let c = hex(hexcode);
         let lab = c.oklab().unwrap();
         let back = Rgba::from_oklab(lab).unwrap();
@@ -115,7 +126,12 @@ fn hex_parsing_is_total() {
     assert_eq!(parse_hex("#12345"), None);
     assert_eq!(parse_hex(""), None);
     // and it round-trips through the text form
-    let c = Rgba8 { r: 18, g: 52, b: 86, a: 255 };
+    let c = Rgba8 {
+        r: 18,
+        g: 52,
+        b: 86,
+        a: 255,
+    };
     assert_eq!(parse_hex(&c.to_hex()), Some(c));
 }
 
@@ -124,12 +140,23 @@ fn hex_parsing_is_total() {
 #[test]
 fn absurd_chroma_lands_in_gamut() {
     // Wild chroma at a mid lightness: mapped, never Err, never NaN.
-    let loud = color_kit::Oklch { l: 0.7, c: 0.9, h: 1.2 };
+    let loud = color_kit::Oklch {
+        l: 0.7,
+        c: 0.9,
+        h: 1.2,
+    };
     let mapped = Rgba::from_oklch(loud).unwrap();
-    let eight = mapped.to_srgb8().expect("mapped colour must be displayable");
+    let eight = mapped
+        .to_srgb8()
+        .expect("mapped colour must be displayable");
     assert!(eight.to_linear().is_finite());
     // Out-of-range lightness is clamped, not rejected.
-    let dark = Rgba::from_oklch(color_kit::Oklch { l: -0.5, c: 0.1, h: 0.0 }).unwrap();
+    let dark = Rgba::from_oklch(color_kit::Oklch {
+        l: -0.5,
+        c: 0.1,
+        h: 0.0,
+    })
+    .unwrap();
     assert!(dark.to_srgb8().is_ok());
 }
 
@@ -153,14 +180,21 @@ fn cvd_simulation_collapses_red_green_pairs() {
 #[test]
 fn cvd_simulation_stays_in_range() {
     for hexcode in ["#000000", "#ffffff", "#7f3fbf", "#00ff00"] {
-        for kind in [CvdKind::Protanopia, CvdKind::Deuteranopia, CvdKind::Tritanopia] {
+        for kind in [
+            CvdKind::Protanopia,
+            CvdKind::Deuteranopia,
+            CvdKind::Tritanopia,
+        ] {
             let sim = simulate_cvd(hex(hexcode), kind);
             assert!(sim.is_finite());
             let _ = sim.to_srgb8().expect("simulated colour is displayable");
         }
     }
     // Non-finite input is sanitised, not propagated.
-    let sim = simulate_cvd(Rgba::linear(f64::NAN, f64::NAN, f64::NAN), CvdKind::Deuteranopia);
+    let sim = simulate_cvd(
+        Rgba::linear(f64::NAN, f64::NAN, f64::NAN),
+        CvdKind::Deuteranopia,
+    );
     assert!(sim.is_finite());
 }
 
@@ -168,13 +202,18 @@ fn cvd_simulation_stays_in_range() {
 
 #[test]
 fn quantize_is_deterministic_and_total() {
-    let palette: Vec<Rgba> = ["#000000", "#ff0000", "#00ff00", "#0000ff", "#888888", "#ffffff"]
-        .iter()
-        .map(|s| hex(s))
-        .collect();
+    let palette: Vec<Rgba> = [
+        "#000000", "#ff0000", "#00ff00", "#0000ff", "#888888", "#ffffff",
+    ]
+    .iter()
+    .map(|s| hex(s))
+    .collect();
     let a = quantize(&palette, 4, 42);
     let b = quantize(&palette, 4, 42);
-    assert_eq!(a, b, "same seed, same bytes — the attestation surface depends on it");
+    assert_eq!(
+        a, b,
+        "same seed, same bytes — the attestation surface depends on it"
+    );
     assert!(a.len() <= 4 && !a.is_empty());
 
     // Degenerate inputs terminate with sane answers.

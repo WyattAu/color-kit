@@ -32,12 +32,7 @@ impl Lcg {
 fn to_lab(c: Rgba) -> Oklab {
     // Non-finite inputs are sanitised by the Rgba constructors' documented
     // saturation rules; clamp here so distance maths never sees NaN.
-    let clean = Rgba::linear_rgba(
-        finite(c.r),
-        finite(c.g),
-        finite(c.b),
-        1.0,
-    );
+    let clean = Rgba::linear_rgba(finite(c.r), finite(c.g), finite(c.b), 1.0);
     clean.oklab().unwrap_or(Oklab {
         l: 0.0,
         a: 0.0,
@@ -74,9 +69,17 @@ pub fn quantize(palette: &[Rgba], n: usize, seed: u64) -> Vec<Rgba> {
 
     // Seeding: the first centroid is seed-chosen, the rest by farthest-point
     // (deterministic, and better than random when `n` is small).
-    let mut rng = Lcg(if seed == 0 { 0x9E37_79B9_7F4A_7C15 } else { seed });
+    let mut rng = Lcg(if seed == 0 {
+        0x9E37_79B9_7F4A_7C15
+    } else {
+        seed
+    });
     let first = (rng.unit() * points.len() as f64) as usize % points.len().max(1);
-    centroids.push(points.get(first).copied().unwrap_or(Oklab { l: 0.0, a: 0.0, b: 0.0 }));
+    centroids.push(points.get(first).copied().unwrap_or(Oklab {
+        l: 0.0,
+        a: 0.0,
+        b: 0.0,
+    }));
     while centroids.len() < n {
         let mut best = 0usize;
         let mut best_d = -1.0f64;
@@ -95,7 +98,11 @@ pub fn quantize(palette: &[Rgba], n: usize, seed: u64) -> Vec<Rgba> {
         if best_d <= 1e-12 {
             break;
         }
-        centroids.push(points.get(best).copied().unwrap_or(Oklab { l: 0.0, a: 0.0, b: 0.0 }));
+        centroids.push(points.get(best).copied().unwrap_or(Oklab {
+            l: 0.0,
+            a: 0.0,
+            b: 0.0,
+        }));
     }
 
     // Lloyd iterations with a hard bound.

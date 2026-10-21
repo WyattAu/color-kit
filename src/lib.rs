@@ -52,8 +52,8 @@ mod quantize;
 
 pub use color::{parse_hex, Oklab, Oklch, Palette, Rgba, Rgba8};
 pub use contrast::{
-    contrast_ratio, lightness_contrast, meets_wcag, wcag_level, WcagLevel, WCAG_AA_LARGE,
-    WCAG_AA_NORMAL, WCAG_AAA_NORMAL,
+    contrast_ratio, lightness_contrast, meets_wcag, wcag_level, WcagLevel, WCAG_AAA_NORMAL,
+    WCAG_AA_LARGE, WCAG_AA_NORMAL,
 };
 pub use cvd::{simulate_cvd, CvdKind};
 pub use error::ColorError;
