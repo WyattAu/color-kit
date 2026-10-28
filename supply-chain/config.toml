@@ -51,6 +51,10 @@ criteria = "safe-to-run"
 version = "0.1.0"
 criteria = "safe-to-deploy"
 
+[[exemptions.color-kit]]
+version = "0.1.1"
+criteria = "safe-to-deploy"
+
 [[exemptions.core_detect]]
 version = "1.0.0"
 criteria = "safe-to-run"
@@ -153,6 +157,10 @@ criteria = "safe-to-run"
 
 [[exemptions.rustix]]
 version = "1.1.5"
+criteria = "safe-to-run"
+
+[[exemptions.rustix]]
+version = "1.1.6"
 criteria = "safe-to-run"
 
 [[exemptions.rusty-fork]]
