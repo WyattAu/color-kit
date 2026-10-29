@@ -48,10 +48,6 @@ version = "0.10.2"
 criteria = "safe-to-run"
 
 [[exemptions.color-kit]]
-version = "0.1.0"
-criteria = "safe-to-deploy"
-
-[[exemptions.color-kit]]
 version = "0.1.1"
 criteria = "safe-to-deploy"
 
@@ -153,10 +149,6 @@ criteria = "safe-to-run"
 
 [[exemptions.regex-syntax]]
 version = "0.8.11"
-criteria = "safe-to-run"
-
-[[exemptions.rustix]]
-version = "1.1.5"
 criteria = "safe-to-run"
 
 [[exemptions.rustix]]
